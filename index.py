@@ -59,7 +59,7 @@ def csvReader():
                 report = {
                     "PATH": PATH,
                     "CSV": CSV,
-                    "last_upadte": datetime.datetime.now(),
+                    "last_update": datetime.datetime.now(),
                     "next_update": datetime.datetime.now() + datetime.timedelta(days=1)
                 }
                 StoreData([report], os.environ['HEADER'])
