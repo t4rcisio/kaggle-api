@@ -1,1 +1,1 @@
-web: uvicorn index:app
+worker: python index.py
