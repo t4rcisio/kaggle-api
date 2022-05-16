@@ -1,3 +1,4 @@
+import uvicorn
 import datetime
 import os
 from urllib import response
@@ -11,6 +12,7 @@ os.environ['MONGO_DB'] = os.getenv('MONGO_DB')
 os.environ['DATABASE'] = os.getenv('DATABASE')
 os.environ['COLLECTION'] = os.getenv('COLLECTION')
 os.environ['HEADER'] = os.getenv('HEADER')
+
 
 import pymongo
 import csv
@@ -133,3 +135,7 @@ def StoreData(itens, collectionName):
 def DeleleFiles():
     os.remove("./" + PATH +".zip")
     os.remove("./csv/"+CSV)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port= os.getenv('PORT'))
