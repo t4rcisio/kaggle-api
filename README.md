@@ -50,7 +50,7 @@ Em caso afirmativo, o script faz uma requisição a API da Kaggle, recebendo um 
 ```
 Para executar a API,
 Faça o clone do repositório: git clone
-Crie um ambiente virtual: python -m venv venv
+Crie um ambiente virtual: python -m venv local_env
 Atve o ambiente virtual: local_env\Scripts\activate
 Execute o arquivo: python index.py
 
