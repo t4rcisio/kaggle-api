@@ -26,7 +26,10 @@ from zipfile import ZipFile
 PATH = "omicron-covid19-variant-daily-cases"
 CSV="covid-variants.csv"
 
+
+
 app = FastAPI()
+
 
 # Rota default
 @app.get("/")
@@ -138,4 +141,4 @@ def DeleleFiles():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port= os.getenv('PORT'))
+    uvicorn.run(app,host="0.0.0.0", port=int(os.getenv('PORT')))
