@@ -1,5 +1,4 @@
 import datetime
-from email import message
 import os
 from urllib import response
 from dotenv import load_dotenv
