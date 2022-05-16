@@ -12,6 +12,7 @@ os.environ['MONGO_DB'] = os.getenv('MONGO_DB')
 os.environ['DATABASE'] = os.getenv('DATABASE')
 os.environ['COLLECTION'] = os.getenv('COLLECTION')
 os.environ['HEADER'] = os.getenv('HEADER')
+os.environ['PORT'] = os.getenv('PORT')
 
 
 import pymongo
@@ -140,5 +141,7 @@ def DeleleFiles():
     os.remove("./csv/"+CSV)
 
 
+
 if __name__ == "__main__":
-    uvicorn.run(app,host="0.0.0.0", port=int(os.getenv('PORT')))
+    print("Port: "+os.environ['PORT'])
+    uvicorn.run(app,host="0.0.0.0", port=int(os.environ['PORT']))
