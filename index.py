@@ -1,15 +1,23 @@
+import datetime
+from email import message
 import os
+from urllib import response
 from dotenv import load_dotenv
 load_dotenv()
 
 os.environ['KAGGLE_USERNAME'] = os.getenv('KAGGLE_USERNAME')
 os.environ['KAGGLE_KEY'] = os.getenv('KAGGLE_KEY')
+os.environ['MONGO_DB'] = os.getenv('MONGO_DB')
+os.environ['DATABASE'] = os.getenv('DATABASE')
+os.environ['COLLECTION'] = os.getenv('COLLECTION')
 
+import pymongo
+import csv
 from kaggle.api.kaggle_api_extended import KaggleApi
 from fastapi import FastAPI
 from zipfile import ZipFile
 
-import csv
+
 
 
 PATH = "omicron-covid19-variant-daily-cases"
@@ -24,13 +32,16 @@ def home():
 
 @app.get("/kaggle")
 def kaggle():
+    if(not(VerifyUpdates())):
+        return ({"Database":"Updated"})
     api = KaggleApi()
     api.authenticate()
     csvfile =  api.dataset_download_files("yamqwe/"+PATH)
-    print(type(csvfile))
     Unzip()
     list = csvReader()
-    return ("done")
+    #StoreData(list)
+    DeleleFiles()
+    return ({"Database":"Updating"})
 
 def Unzip():
     zf = ZipFile('./' + PATH + '.zip', 'r')
@@ -41,15 +52,50 @@ def csvReader():
     list = []
     with open("./csv/"+CSV, newline='') as csvfile:
         spamreader = csv.reader(csvfile, skipinitialspace=False,delimiter=',', quotechar='|')
+        index = 0
         for row in spamreader:
-            report = {
-                "location": row[0],
-                "data": row[1],
-                "variant": row[2],
-                "num_sequences" : row[3],
-                "perc_sequences" : row[4],
-                "num_sequences_total": row[5]
-            }
+            if(index == 0):
+                report = {
+                    "PATH": PATH,
+                    "CSV": CSV,
+                    "last_upadte": datetime.datetime.now(),
+                    "next_update": datetime.datetime.now() + datetime.timedelta(days=1)
+                }
+                index = index + 1
+            else:
+                report = {
+                    "location": row[0],
+                    "data": row[1],
+                    "variant": row[2],
+                    "num_sequences" : int(float(row[3])),
+                    "perc_sequences" : int(float(row[4])),
+                    "num_sequences_total": int(float(row[5]))
+                }
             list.append(report)
-    print(list)
     return list
+
+
+def VerifyUpdates():
+    client = pymongo.MongoClient(os.environ['MONGO_DB'])
+    database = client[os.environ['DATABASE']]
+    collection = database[os.environ['COLLECTION']]
+    header = collection.find_one()
+    try:
+        if(datetime.datetime.now() > header["next_update"]):
+            return True
+        else:
+            return False
+    except:
+        return True
+
+
+
+def StoreData(itens):
+    client = pymongo.MongoClient(os.environ['MONGO_DB'])
+    database = client[os.environ['DATABASE']]
+    collection = database[os.environ['COLLECTION']]
+    list = collection.insert_many(itens)
+
+def DeleleFiles():
+    os.remove("./" + PATH +".zip")
+    os.remove("./csv/"+CSV)
