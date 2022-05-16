@@ -1,7 +1,7 @@
 # Backend Challenge 🏅 2022 - Covid Daily Cases
 
 
-[Deploy da API](https://kaggleapi.herokuapp.com)
+[Deploy da API](https://kaggleapi.herokuapp.com) <br/>
 [Repositório API principal](https://github.com/t4rcisio/Covid-Daily-Cases)
 
 ```
