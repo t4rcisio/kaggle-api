@@ -18,8 +18,9 @@ os.environ['PORT'] = os.getenv('PORT')
 import pymongo
 import csv
 from kaggle.api.kaggle_api_extended import KaggleApi
-from fastapi import FastAPI
 from zipfile import ZipFile
+from flask import Flask
+app = Flask(__name__)
 
 
 
@@ -28,17 +29,13 @@ PATH = "omicron-covid19-variant-daily-cases"
 CSV="covid-variants.csv"
 
 
-
-app = FastAPI()
-
-
 # Rota default
-@app.get("/")
+@app.route("/")
 def home():
     return ("Backend Challenge 2021 🏅 - Covid Daily Cases")
 
 # Rota para atualizar o banco
-@app.get("/kaggle")
+@app.route("/kaggle")
 def kaggle():
     # O Banco está configurado para atualizar a cada 24 horas
     # Assim, sempre que a rota de atualização do banco for solicitada,
@@ -143,4 +140,5 @@ def DeleleFiles():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app,host="0.0.0.0", port=int(os.environ['PORT']) or os.getenv('PORT'))
+    port = int(os.environ.get('PORT',7000 ))
+    app.run(host='0.0.0.0', port=port)
