@@ -42,7 +42,7 @@ def kaggle():
     # Assim, sempre que a rota de atualização do banco for solicitada,
     # vefifica se é preciso fazer uma atualização
     if(not(VerifyUpdates())):
-        return ({"Database":"Updated"})
+        return ({"Status":"Updated"})
     api = KaggleApi()
     api.authenticate()
 
@@ -60,7 +60,7 @@ def kaggle():
 
     #Deleta os arquivos gerados
     DeleleFiles()
-    return ({"Database":"Updating"})
+    return ({"Status":"Updating"})
 
 def Unzip():
     zip = ZipFile('./' + PATH + '.zip', 'r')
