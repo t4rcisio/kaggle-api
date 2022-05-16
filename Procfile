@@ -1,1 +1,1 @@
-web:  uvicorn index:app --port=$PORT
+web: python index.py
