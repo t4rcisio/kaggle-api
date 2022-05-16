@@ -56,7 +56,7 @@ def kaggle():
     list = csvReader()
 
     #Envia os arquivos para resem gravados no banco
-    StoreData(list, os.environ['COLLECTION'])
+    StoreData(list, os.environ.get('COLLECTION'))
 
     #Deleta os arquivos gerados
     DeleleFiles()
@@ -83,8 +83,8 @@ def csvReader():
                     "last_update": datetime.datetime.now(), # Data e hora atual
                     "next_update": datetime.datetime.now() + datetime.timedelta(days=1) # Próximo update do banco
                 }
-                StoreData([report], os.environ['HEADER']) # Grava os dados
-                DropCollection(os.environ['COLLECTION']) # Apaga a coleção dados atual
+                StoreData([report], os.environ.get('HEADER')) # Grava os dados
+                DropCollection(os.environ.get('COLLECTION')) # Apaga a coleção dados atual
                 index = index + 1
             else:
                 # Monta um objeto no formato do esquema a ser gravado no banco
@@ -103,9 +103,9 @@ def csvReader():
 
 def VerifyUpdates():
     # Consulta na tabela metadata quando foi a última atualização do banco 
-    client = pymongo.MongoClient(os.environ['MONGO_DB'])
-    database = client[os.environ['DATABASE']]
-    collection = database[os.environ['HEADER']]
+    client = pymongo.MongoClient(os.environ.get('MONGO_DB'))
+    database = client[os.environ.get('DATABASE')]
+    collection = database[os.environ.get('HEADER')]
     header = collection.find_one()
     try:
         # Caso tenha mais de 24h da última atualização, então o banco sofrerá uma atualização
@@ -115,20 +115,20 @@ def VerifyUpdates():
             return False
     except:
         #Apaga os dados do metadata
-        DropCollection(os.environ['HEADER'])
+        DropCollection(os.environ.get('HEADER'))
         return True
 
 def DropCollection(collectionName):
-    client = pymongo.MongoClient(os.environ['MONGO_DB'])
-    database = client[os.environ['DATABASE']]
+    client = pymongo.MongoClient(os.environ.get('MONGO_DB'))
+    database = client[os.environ.get('DATABASE')]
     collection = database[collectionName]
     collection.drop()
 
 
 def StoreData(itens, collectionName):
     # Faz uma conexão com o banco
-    client = pymongo.MongoClient(os.environ['MONGO_DB'])
-    database = client[os.environ['DATABASE']]
+    client = pymongo.MongoClient(os.environ.get('MONGO_DB'))
+    database = client[os.environ.get('DATABASE')]
     collection = database[collectionName]
     # Insere tudo no banco - Devido ao alto volume de dados, 
     # o processo leva em torno de 55 segundos!
