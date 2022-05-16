@@ -1,1 +1,1 @@
-start: python index:main
+web: python index.py
