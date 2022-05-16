@@ -10,6 +10,7 @@ os.environ['KAGGLE_KEY'] = os.getenv('KAGGLE_KEY')
 os.environ['MONGO_DB'] = os.getenv('MONGO_DB')
 os.environ['DATABASE'] = os.getenv('DATABASE')
 os.environ['COLLECTION'] = os.getenv('COLLECTION')
+os.environ['HEADER'] = os.getenv('HEADER')
 
 import pymongo
 import csv
@@ -39,7 +40,7 @@ def kaggle():
     csvfile =  api.dataset_download_files("yamqwe/"+PATH)
     Unzip()
     list = csvReader()
-    #StoreData(list)
+    StoreData(list, os.environ['COLLECTION'])
     DeleleFiles()
     return ({"Database":"Updating"})
 
@@ -61,39 +62,50 @@ def csvReader():
                     "last_upadte": datetime.datetime.now(),
                     "next_update": datetime.datetime.now() + datetime.timedelta(days=1)
                 }
+                StoreData([report], os.environ['HEADER'])
+                DropCollection(os.environ['COLLECTION'])
                 index = index + 1
             else:
                 report = {
                     "location": row[0],
-                    "data": row[1],
+                    "date": datetime.datetime.strptime(row[1]+"T00:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
                     "variant": row[2],
                     "num_sequences" : int(float(row[3])),
                     "perc_sequences" : int(float(row[4])),
                     "num_sequences_total": int(float(row[5]))
                 }
-            list.append(report)
+                list.append(report)
+
+    print(list[1])
     return list
 
 
 def VerifyUpdates():
     client = pymongo.MongoClient(os.environ['MONGO_DB'])
     database = client[os.environ['DATABASE']]
-    collection = database[os.environ['COLLECTION']]
+    collection = database[os.environ['HEADER']]
     header = collection.find_one()
+    print(header)
     try:
         if(datetime.datetime.now() > header["next_update"]):
             return True
         else:
             return False
     except:
+        DropCollection(os.environ['HEADER'])
         return True
 
-
-
-def StoreData(itens):
+def DropCollection(collectionName):
     client = pymongo.MongoClient(os.environ['MONGO_DB'])
     database = client[os.environ['DATABASE']]
-    collection = database[os.environ['COLLECTION']]
+    collection = database[collectionName]
+    collection.drop()
+
+
+def StoreData(itens, collectionName):
+    client = pymongo.MongoClient(os.environ['MONGO_DB'])
+    database = client[os.environ['DATABASE']]
+    collection = database[collectionName]
     list = collection.insert_many(itens)
 
 def DeleleFiles():
