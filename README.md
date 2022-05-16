@@ -48,5 +48,5 @@ Em caso afirmativo, o script faz uma requisição a API da Kaggle, recebendo um 
 
 ## O ARQUIVO .ENV ESTÁ PREENCHIDO, MAS AS CREDENCIAIS SÃO TEMPORÁRIAS
 
-
+By coodesh
 
